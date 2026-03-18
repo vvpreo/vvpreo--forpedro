@@ -1,0 +1,16 @@
+about: This text provides a recipe for a no-bake cheesecake, including the ingredients
+  and steps to prepare it.
+is_contract: false
+key_clauses:
+- Ingredients needed
+- Preparation steps
+- Serving suggestions
+parties:
+- potential_risks:
+  - Allergies to cream cheese or heavy cream
+  - Food safety issues if not refrigerated properly
+  role: Chef
+- potential_risks:
+  - Potential to dislike the dessert
+  - Difficulty obtaining ingredients
+  role: Consumer

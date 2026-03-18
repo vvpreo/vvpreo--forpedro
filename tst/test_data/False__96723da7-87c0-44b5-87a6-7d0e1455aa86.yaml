@@ -1,0 +1,18 @@
+about: This text provides a recipe for butternut squash soup, detailing the ingredients
+  and steps to prepare it.
+is_contract: false
+key_clauses:
+- Peeling and dicing 1 medium butternut squash
+- Chopping one onion and two carrots
+- Heating 2 tablespoons of olive oil in a large pot
+- Cooking the onion and carrots until softened
+- Adding butternut squash, 4 cups of vegetable broth, salt, and pepper
+- Bringing the mixture to a boil and simmering for 20-25 minutes
+- Blending the soup until creamy and smooth
+- Garnishing with pumpkin seeds or nutmeg
+parties:
+- potential_risks:
+  - Miscalculating ingredient amounts
+  - Overcooking the vegetables
+  - Not blending the soup to a smooth consistency
+  role: Chef

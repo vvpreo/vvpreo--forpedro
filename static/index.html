@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Contract Risk Analyzer</title>
     <style>
         :root {
@@ -231,43 +231,43 @@
 <div class="wrap">
     <div class="header">
         <h1>Contract Risk Analyzer</h1>
-        <p class="subtitle">Вставьте текст договора и получите структурированный анализ рисков.</p>
+        <p class="subtitle">Paste the contract text and get a structured risk analysis.</p>
     </div>
 
     <div class="card">
         <div class="label">
-            <span>Текст договора</span>
-            <span class="hint">Ограничение: до 50 000 символов</span>
+            <span>Contract Text</span>
+            <span class="hint">Limit: up to 50,000 characters</span>
         </div>
 
-        <textarea id="contractText" placeholder="Вставьте сюда текст договора..."></textarea>
+        <textarea id="contractText" placeholder="Paste the contract text here..."></textarea>
 
         <div class="actions">
-            <button id="analyzeBtn" type="button">Анализировать</button>
-            <button id="clearBtn" class="ghost" type="button">Очистить</button>
-            <span id="counter" class="hint">0 символов</span>
+            <button id="analyzeBtn" type="button">Analyze</button>
+            <button id="clearBtn" class="ghost" type="button">Clear</button>
+            <span id="counter" class="hint">0 characters</span>
         </div>
 
         <div id="status" class="status" aria-live="polite"></div>
 
         <div class="result" id="result" style="display:none;">
             <div class="section">
-                <h2>Статус</h2>
+                <h2>Status</h2>
                 <div id="contractStatus" class="empty"></div>
             </div>
 
             <div class="section">
-                <h2>Ключевые пункты</h2>
+                <h2>Key Clauses</h2>
                 <div id="clausesBlock" class="empty"></div>
             </div>
 
             <div class="section">
-                <h2>Риски</h2>
+                <h2>Risks</h2>
                 <div id="risksBlock" class="empty"></div>
             </div>
 
             <div class="section">
-                <h2>Полный ответ</h2>
+                <h2>Full Response</h2>
                 <pre id="rawOutput">{}</pre>
             </div>
         </div>
@@ -309,7 +309,7 @@
 
     function renderClauses(clauses) {
         if (!Array.isArray(clauses) || clauses.length === 0) {
-            return '<div class="empty">Пункты не найдены.</div>';
+            return '<div class="empty">No clauses found.</div>';
         }
 
         return `<pre>${escapeHtml(JSON.stringify(clauses, null, 2))}</pre>`;
@@ -317,7 +317,7 @@
 
     function renderRisks(risks) {
         if (!Array.isArray(risks) || risks.length === 0) {
-            return '<div class="empty">Риски не найдены.</div>';
+            return '<div class="empty">No risks found.</div>';
         }
 
         return `<pre>${escapeHtml(JSON.stringify(risks, null, 2))}</pre>`;
@@ -325,7 +325,7 @@
 
     function updateCounter() {
         const len = contractText.value.length;
-        counter.textContent = `${len.toLocaleString("ru-RU")} символов`;
+        counter.textContent = `${len.toLocaleString("en-US")} characters`;
 
         if (len > MAX_LENGTH) {
             counter.style.color = "#b91c1c";
@@ -351,18 +351,18 @@
         result.style.display = "none";
 
         if (!text) {
-            setStatus("Введите текст договора.", "error");
+            setStatus("Please enter contract text.", "error");
             return;
         }
 
         if (text.length > MAX_LENGTH) {
-            setStatus(`Текст слишком длинный: ${text.length} символов. Максимум — ${MAX_LENGTH}.`, "error");
+            setStatus(`Text is too long: ${text.length} characters. Maximum is ${MAX_LENGTH}.`, "error");
             return;
         }
 
         analyzeBtn.disabled = true;
-        analyzeBtn.textContent = "Анализ...";
-        setStatus("Отправка запроса...", "success");
+        analyzeBtn.textContent = "Analyzing...";
+        setStatus("Sending request...", "success");
 
         try {
             const response = await fetch("/api/analyze", {
@@ -370,7 +370,7 @@
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ text })
+                body: JSON.stringify({text})
             });
 
             const contentType = response.headers.get("content-type") || "";
@@ -380,14 +380,14 @@
                 data = await response.json();
             } else {
                 const textResponse = await response.text();
-                data = { detail: textResponse };
+                data = {detail: textResponse};
             }
 
             if (!response.ok) {
                 const message =
                     data?.detail ||
                     data?.message ||
-                    `Ошибка запроса: ${response.status} ${response.statusText}`;
+                    `Request error: ${response.status} ${response.statusText}`;
                 setStatus(message, "error");
                 return;
             }
@@ -397,21 +397,21 @@
 
             const isContract = Boolean(data.is_contract);
             contractStatus.innerHTML = isContract
-                ? 'Текст распознан как договор <span class="pill">OK</span>'
-                : 'Текст не похож на договор <span class="pill">CHECK</span>';
+                ? 'Text recognized as a contract <span class="pill">OK</span>'
+                : 'Text does not look like a contract <span class="pill">CHECK</span>';
 
             clausesBlock.innerHTML = renderClauses(data.clauses);
             risksBlock.innerHTML = renderRisks(data.risks);
 
-            setStatus("Анализ завершён успешно.", "success");
+            setStatus("Analysis completed successfully.", "success");
         } catch (error) {
             setStatus(
-                "Не удалось выполнить запрос. Проверьте, что сервер запущен и endpoint доступен.",
+                "Failed to execute request. Please check that the server is running and the endpoint is accessible.",
                 "error"
             );
         } finally {
             analyzeBtn.disabled = false;
-            analyzeBtn.textContent = "Анализировать";
+            analyzeBtn.textContent = "Analyze";
         }
     });
 

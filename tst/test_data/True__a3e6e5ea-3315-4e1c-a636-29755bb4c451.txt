@@ -1,0 +1,7 @@
+This Agreement is made on the 1st day of January 2023, between ABC Corporation ("Party A") and XYZ Limited ("Party B").
+
+1. Termination: Either party may terminate this Agreement with a written notice of thirty (30) days in case of breach of any material term by the other party, provided that the breach remains uncured at the end of the notice period.
+
+2. Liability: In no event shall Party A be held liable for any indirect, special, or consequential damages arising from this Agreement, even if advised of the possibility of such damages. The total liability of Party A shall not exceed the amounts paid by Party B under this Agreement during the twelve (12) months prior to the claim.
+
+3. Payment Terms: Party B agrees to pay Party A the sum of $50,000, in three installments: $20,000 upon execution of this Agreement, $15,000 after the first milestone, and the remaining $15,000 upon completion of the services. Payments are due within fifteen (15) days of the invoice date.

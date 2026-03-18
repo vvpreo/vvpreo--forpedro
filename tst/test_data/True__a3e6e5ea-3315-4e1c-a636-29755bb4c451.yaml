@@ -1,0 +1,19 @@
+about: This contract outlines the agreement between ABC Corporation and XYZ Limited
+  regarding a service provision, payment structure, termination conditions, and liability
+  limitations.
+is_contract: true
+key_clauses:
+- 'Termination Clause: Either party can terminate with 30 days notice for uncured
+  material breach.'
+- 'Liability Clause: Party A limits liability to amounts paid by Party B and excludes
+  indirect damages.'
+- 'Payment Terms: $50,000 total payable in three installments.'
+parties:
+- potential_risks:
+  - Limited liability for damages which may burden Party B with losses
+  - Possibility of unaddressed breaches leading to contract termination without resolution
+  role: Party A
+- potential_risks:
+  - Obligation to pay regardless of service satisfaction during contract term
+  - Risk of significant advance payment with limited recourse on unsatisfactory service
+  role: Party B

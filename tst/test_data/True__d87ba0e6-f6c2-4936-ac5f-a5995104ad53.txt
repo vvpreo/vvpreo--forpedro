@@ -1,0 +1,9 @@
+This Agreement is made effective as of October 1, 2023, by and between XYZ Corporation, a Delaware corporation, and ABC LLC, a California limited liability company. 
+
+1. **Payment Terms**: ABC LLC agrees to pay XYZ Corporation a total of $50,000 for consulting services as outlined in Schedule A, with an initial payment of $25,000 due upon signing of this Agreement and the remaining balance due 30 days thereafter.
+
+2. **Termination**: Either party may terminate this Agreement upon written notice of 30 days if the other party fails to comply with any material provision of this Agreement. There will be no refund of payments made for services performed up to the date of termination.
+
+3. **Liability**: XYZ Corporation's liability for any claims arising out of this Agreement shall be limited to the amount paid by ABC LLC for the services, and under no circumstances shall XYZ Corporation be liable for any indirect, incidental, or consequential damages.
+
+IN WITNESS WHEREOF, the parties hereto,

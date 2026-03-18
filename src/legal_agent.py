@@ -25,7 +25,7 @@ async def analyze_contract_text(text: str) -> AnalyzeResponse:
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": text}
             ],
-            response_model=AnalyzeResponse
+            response_format=AnalyzeResponse
         )
 
         return response.choices[0].message.parsed

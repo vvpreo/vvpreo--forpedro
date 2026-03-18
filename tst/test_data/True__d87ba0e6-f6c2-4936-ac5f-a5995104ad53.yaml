@@ -1,0 +1,20 @@
+about: This contract outlines the agreement between XYZ Corporation and ABC LLC regarding
+  consulting services, including payment terms, termination conditions, and liability
+  limitations.
+is_contract: true
+key_clauses:
+- 'Payment Terms: ABC LLC to pay $50,000 total, with $25,000 due upon signing and
+  the remainder 30 days later.'
+- 'Termination: 30 days written notice required for termination due to non-compliance
+  with material provisions.'
+- 'Liability: XYZ Corporation''s liability limited to amount paid by ABC LLC, excluding
+  indirect or consequential damages.'
+parties:
+- potential_risks:
+  - Potential for disputes over service quality or performance
+  - Risk of non-payment by ABC LLC for services rendered
+  role: Consultant
+- potential_risks:
+  - Risk of receiving subpar consulting services from XYZ Corporation
+  - Potential financial obligation without guaranteed outcomes
+  role: Client

@@ -1,0 +1,7 @@
+This Service Agreement ("Agreement") is made and entered into as of the 1st day of January, 2024, by and between XYZ Corporation ("Client") and ABC Services, LLC ("Service Provider").
+
+1. **Services:** The Service Provider agrees to provide consulting services as outlined in Exhibit A.
+2. **Payment Terms:** Client shall pay the Service Provider $100.00 per hour, payable within 30 days of receipt of invoice.
+3. **Termination:** Either party may terminate this Agreement with thirty (30) days written notice to the other party. Upon termination, Client shall pay for all services rendered up to the date of termination.
+4. **Liability:** In no event shall either party be liable for any indirect, incidental, or consequential damages arising out of this Agreement. Each party’s liability is limited to the total fees paid under this Agreement. 
+5. **Governing Law:** This Agreement shall be governed by the laws of the State of California.

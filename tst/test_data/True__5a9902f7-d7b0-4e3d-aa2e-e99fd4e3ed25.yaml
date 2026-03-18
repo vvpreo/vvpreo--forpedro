@@ -1,0 +1,20 @@
+about: This contract outlines the terms and conditions under which ABC Services, LLC
+  agrees to provide digital marketing services to XYZ Corporation.
+is_contract: true
+key_clauses:
+- Services
+- Payment Terms
+- Termination
+- Liability
+- Governing Law
+parties:
+- potential_risks:
+  - Limited liability for claims
+  - Client dissatisfaction leading to termination
+  - Potential disputes over scope of services
+  role: Provider
+- potential_risks:
+  - Advance payment without guaranteed satisfaction
+  - Liability limitations on scope of claims
+  - Potential delays in service delivery
+  role: Client

@@ -1,0 +1,15 @@
+about: This text provides a recipe for making homemade lemonade, detailing the ingredients
+  and steps needed to prepare the drink.
+is_contract: false
+key_clauses:
+- 'Combine ingredients: lemons, sugar, and water'
+- Create simple syrup by dissolving sugar in water
+- Mix syrup with lemon juice and remaining water
+- Adjust sweetness according to taste
+- Chill and serve with ice and mint
+parties:
+- potential_risks:
+  - Misjudging the sweetness
+  - Not removing seeds from lemons
+  - Improper chilling leading to a warm drink
+  role: Chef

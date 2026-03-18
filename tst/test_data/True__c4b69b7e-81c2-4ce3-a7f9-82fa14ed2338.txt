@@ -1,0 +1,6 @@
+**Contract Agreement**  
+This Contract is made effective as of January 1, 2024, by and between Company A ("Provider"), with a principal place of business at 123 Business St., City, State, and Client B ("Client"), located at 456 Client Ave., City, State.  
+1. **Scope of Work**: Provider agrees to deliver software development services as outlined in Exhibit A.  
+2. **Payment Terms**: Client agrees to pay Provider a total fee of $50,000, with a deposit of $10,000 due upon signing and the remainder payable in equal installments every month for the next four months.  
+3. **Termination**: Either party may terminate this contract with thirty (30) days written notice to the other party. In the event of termination, Client shall pay for all services rendered up to the date of termination.  
+4. **Liability**: Provider's liability shall not exceed the total amount paid by Client under this contract. Provider shall not be liable for indirect, incidental, or consequential damages arising from this.

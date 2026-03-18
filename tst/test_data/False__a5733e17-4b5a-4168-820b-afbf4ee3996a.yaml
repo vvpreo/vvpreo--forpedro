@@ -1,0 +1,17 @@
+about: This text provides a recipe for a quick and easy stir-fry dish suitable for
+  a weekday dinner.
+is_contract: false
+key_clauses:
+- 'Ingredients to use: bell peppers, broccoli, snap peas, chicken or tofu, soy sauce,
+  rice'
+- 'Cooking method: stir-frying veggies and protein for about 5 minutes'
+- 'Serving suggestion: serve over rice'
+parties:
+- potential_risks:
+  - Ingredient substitutions might alter the taste
+  - Cooking time may vary causing dish to be undercooked or overcooked
+  role: Chef
+- potential_risks:
+  - Risk of not having all ingredients on hand
+  - Potential food allergies to consider
+  role: Home Cook

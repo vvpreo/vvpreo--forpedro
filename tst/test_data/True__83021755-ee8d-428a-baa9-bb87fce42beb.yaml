@@ -1,0 +1,22 @@
+about: This contract is a Service Agreement between XYZ Corporation and ABC Services,
+  LLC, detailing the provision of consulting services, payment terms, termination
+  conditions, liability limitations, and governing law.
+is_contract: true
+key_clauses:
+- 'Services: The Service Provider agrees to provide consulting services as outlined
+  in Exhibit A.'
+- 'Payment Terms: Client shall pay the Service Provider $100.00 per hour, payable
+  within 30 days of receipt of invoice.'
+- 'Termination: Either party may terminate this Agreement with thirty (30) days written
+  notice to the other party, and the Client shall pay for services rendered up to
+  the termination date.'
+- 'Liability: Each party''s liability is limited to the total fees paid under this
+  Agreement, with no liability for indirect or consequential damages.'
+- 'Governing Law: The Agreement is governed by the laws of the State of California.'
+parties:
+- potential_risks:
+  - Potential non-payment for services rendered if not carefully managed.
+  role: Client
+- potential_risks:
+  - Potential for disputes over the scope of services outlined in Exhibit A.
+  role: Service Provider

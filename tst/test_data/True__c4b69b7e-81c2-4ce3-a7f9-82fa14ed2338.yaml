@@ -1,0 +1,18 @@
+about: This contract outlines the agreement between Provider and Client regarding
+  software development services, including payment terms, termination conditions,
+  and liability limitations.
+is_contract: true
+key_clauses:
+- Scope of Work
+- Payment Terms
+- Termination
+- Liability
+parties:
+- potential_risks:
+  - Non-payment by Client
+  - Client's unacceptable changes to project scope
+  role: Provider
+- potential_risks:
+  - Delays in service delivery by Provider
+  - Potential limits on liability affecting recourse
+  role: Client
