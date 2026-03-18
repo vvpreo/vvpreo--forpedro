@@ -1,8 +1,9 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Contract Risk Analyzer</title>
     <style>
         :root {
@@ -172,6 +173,7 @@
             border-radius: 14px;
             padding: 16px;
             background: #fff;
+            min-width: 0;
         }
 
         .section h2 {
@@ -193,6 +195,8 @@
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 14px;
+            white-space: pre-wrap;
+            word-break: break-word;
         }
 
         .meta {
@@ -224,7 +228,7 @@
             background: #fafafa;
         }
 
-        .party + .party {
+        .party+.party {
             margin-top: 10px;
         }
 
@@ -247,215 +251,250 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 </head>
+
 <body>
-<div class="wrap">
-    <div class="header">
-        <h1>Contract Risk Analyzer</h1>
-        <p class="subtitle">Paste the contract text and get a structured analysis.</p>
+    <div class="wrap">
+        <div class="header">
+            <h1>Contract Risk Analyzer</h1>
+            <p class="subtitle">Paste the contract text and get a structured analysis.</p>
+        </div>
+
+        <div class="card">
+<!--            <div class="label">-->
+<!--                <span>Contract Text</span>-->
+<!--                <span class="hint">Limit: up to 50,000 characters</span>-->
+<!--            </div>-->
+
+            <textarea id="contractText" placeholder="Paste the contract text here..."></textarea>
+
+            <div class="actions">
+                <button id="analyzeBtn" type="button">Analyze</button>
+                <button id="clearBtn" class="ghost" type="button">Clear</button>
+                <span id="counter" class="hint">0 characters</span>
+            </div>
+
+            <div id="status" class="status" aria-live="polite"></div>
+
+            <div class="result" id="result" style="display:none;">
+                <div class="section">
+                    <h2>Contract Classification</h2>
+                    <div id="contractStatus" class="empty"></div>
+                </div>
+
+                <div class="section">
+                    <h2>About</h2>
+                    <div id="aboutBlock" class="empty"></div>
+                </div>
+
+                <div class="section">
+                    <h2>Key Clauses</h2>
+                    <div id="clausesBlock" class="empty"></div>
+                </div>
+
+                <div class="section">
+                    <h2>Parties</h2>
+                    <div id="partiesBlock" class="empty"></div>
+                </div>
+
+                <div class="section">
+                    <h2>Potential Risks</h2>
+                    <div id="risksBlock" class="empty"></div>
+                </div>
+
+                <div class="section">
+                    <h2>Full Response</h2>
+                    <pre id="rawOutput">{}</pre>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="card">
-        <div class="label">
-            <span>Contract Text</span>
-            <span class="hint">Limit: up to 50,000 characters</span>
-        </div>
+    <script>
+        const MAX_LENGTH = 50000;
 
-        <textarea id="contractText" placeholder="Paste the contract text here..."></textarea>
+        const contractText = document.getElementById("contractText");
+        const analyzeBtn = document.getElementById("analyzeBtn");
+        const clearBtn = document.getElementById("clearBtn");
+        const counter = document.getElementById("counter");
+        const status = document.getElementById("status");
+        const result = document.getElementById("result");
+        const contractStatus = document.getElementById("contractStatus");
+        const aboutBlock = document.getElementById("aboutBlock");
+        const clausesBlock = document.getElementById("clausesBlock");
+        const partiesBlock = document.getElementById("partiesBlock");
+        const risksBlock = document.getElementById("risksBlock");
+        const rawOutput = document.getElementById("rawOutput");
 
-        <div class="actions">
-            <button id="analyzeBtn" type="button">Analyze</button>
-            <button id="clearBtn" class="ghost" type="button">Clear</button>
-            <span id="counter" class="hint">0 characters</span>
-        </div>
-
-        <div id="status" class="status" aria-live="polite"></div>
-
-        <div class="result" id="result" style="display:none;">
-            <div class="section">
-                <h2>Contract Classification</h2>
-                <div id="contractStatus" class="empty"></div>
-            </div>
-
-            <div class="section">
-                <h2>About</h2>
-                <div id="aboutBlock" class="empty"></div>
-            </div>
-
-            <div class="section">
-                <h2>Key Clauses</h2>
-                <div id="clausesBlock" class="empty"></div>
-            </div>
-
-            <div class="section">
-                <h2>Parties</h2>
-                <div id="partiesBlock" class="empty"></div>
-            </div>
-
-            <div class="section">
-                <h2>Full Response</h2>
-                <pre id="rawOutput">{}</pre>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    const MAX_LENGTH = 50000;
-
-    const contractText = document.getElementById("contractText");
-    const analyzeBtn = document.getElementById("analyzeBtn");
-    const clearBtn = document.getElementById("clearBtn");
-    const counter = document.getElementById("counter");
-    const status = document.getElementById("status");
-    const result = document.getElementById("result");
-    const contractStatus = document.getElementById("contractStatus");
-    const aboutBlock = document.getElementById("aboutBlock");
-    const clausesBlock = document.getElementById("clausesBlock");
-    const partiesBlock = document.getElementById("partiesBlock");
-    const rawOutput = document.getElementById("rawOutput");
-
-    function setStatus(message, type) {
-        status.textContent = message;
-        status.className = `status ${type}`;
-    }
-
-    function clearStatus() {
-        status.textContent = "";
-        status.className = "status";
-    }
-
-    function escapeHtml(value) {
-        return String(value)
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
-    }
-
-    function renderList(items, emptyMessage) {
-        if (!Array.isArray(items) || items.length === 0) {
-            return `<div class="empty">${escapeHtml(emptyMessage)}</div>`;
+        function setStatus(message, type) {
+            status.textContent = message;
+            status.className = `status ${type}`;
         }
 
-        return `
+        function clearStatus() {
+            status.textContent = "";
+            status.className = "status";
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function renderList(items, emptyMessage) {
+            if (!Array.isArray(items) || items.length === 0) {
+                return `<div class="empty">${escapeHtml(emptyMessage)}</div>`;
+            }
+
+            return `
             <ul class="list">
                 ${items.map(item => `<li>${escapeHtml(item)}</li>`).join("")}
             </ul>
         `;
-    }
-
-    function renderParties(parties) {
-        if (!Array.isArray(parties) || parties.length === 0) {
-            return '<div class="empty">No parties found.</div>';
         }
 
-        return parties.map(party => `
+        function renderParties(parties) {
+            if (!Array.isArray(parties) || parties.length === 0) {
+                return '<div class="empty">No parties found.</div>';
+            }
+
+            return parties.map(party => `
             <div class="party">
                 <div class="party-role">${escapeHtml(party.role || "Unnamed party")}</div>
                 ${renderList(party.potential_risks, "No risks listed.")}
             </div>
         `).join("");
-    }
-
-    function updateCounter() {
-        const len = contractText.value.length;
-        counter.textContent = `${len.toLocaleString("en-US")} characters`;
-
-        if (len > MAX_LENGTH) {
-            counter.style.color = "#b91c1c";
-        } else {
-            counter.style.color = "";
-        }
-    }
-
-    contractText.addEventListener("input", updateCounter);
-
-    clearBtn.addEventListener("click", () => {
-        contractText.value = "";
-        updateCounter();
-        clearStatus();
-        result.style.display = "none";
-        rawOutput.textContent = "{}";
-    });
-
-    analyzeBtn.addEventListener("click", async () => {
-        const text = contractText.value.trim();
-
-        clearStatus();
-        result.style.display = "none";
-
-        if (!text) {
-            setStatus("Please enter contract text.", "error");
-            return;
         }
 
-        if (text.length > MAX_LENGTH) {
-            setStatus(`Text is too long: ${text.length} characters. Maximum is ${MAX_LENGTH}.`, "error");
-            return;
-        }
-
-        analyzeBtn.disabled = true;
-        analyzeBtn.textContent = "Analyzing...";
-        setStatus("Sending request...", "success");
-
-        try {
-            const response = await fetch("/api/analyze", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ text })
-            });
-
-            const contentType = response.headers.get("content-type") || "";
-            let data = null;
-
-            if (contentType.includes("application/json")) {
-                data = await response.json();
-            } else {
-                const textResponse = await response.text();
-                data = { detail: textResponse };
+        function renderRisks(parties) {
+            if (!Array.isArray(parties) || parties.length === 0) {
+                return '<div class="empty">No risks identified.</div>';
             }
 
-            if (!response.ok) {
-                const message =
-                    data?.detail ||
-                    data?.message ||
-                    `Request error: ${response.status} ${response.statusText}`;
-                setStatus(message, "error");
+            const allRisks = [];
+            parties.forEach(party => {
+                if (Array.isArray(party.potential_risks)) {
+                    allRisks.push(...party.potential_risks);
+                }
+            });
+
+            return renderList(allRisks, "No risks identified.");
+        }
+
+        function updateCounter() {
+            const len = contractText.value.length;
+            counter.textContent = `${len.toLocaleString("en-US")} characters`;
+
+            if (len > MAX_LENGTH) {
+                counter.style.color = "#b91c1c";
+            } else {
+                counter.style.color = "";
+            }
+        }
+
+        contractText.addEventListener("input", updateCounter);
+
+        clearBtn.addEventListener("click", () => {
+            contractText.value = "";
+            updateCounter();
+            clearStatus();
+            result.style.display = "none";
+            rawOutput.textContent = "{}";
+        });
+
+        analyzeBtn.addEventListener("click", async () => {
+            const text = contractText.value.trim();
+
+            clearStatus();
+            result.style.display = "none";
+
+            if (!text) {
+                setStatus("Please enter contract text.", "error");
                 return;
             }
 
-            result.style.display = "grid";
-            rawOutput.textContent = JSON.stringify(data, null, 2);
+            if (text.length > MAX_LENGTH) {
+                setStatus(`Text is too long: ${text.length} characters. Maximum is ${MAX_LENGTH}.`, "error");
+                return;
+            }
 
-            const isContract = Boolean(data.is_contract);
-            contractStatus.innerHTML = isContract
-                ? 'Text recognized as a contract <span class="pill">YES</span>'
-                : 'Text does not look like a contract <span class="pill">NO</span>';
+            analyzeBtn.disabled = true;
+            analyzeBtn.textContent = "Analyzing...";
+            setStatus("Sending request...", "success");
 
-            aboutBlock.innerHTML = data.about
-                ? `<div>${escapeHtml(data.about)}</div>`
-                : '<div class="empty">No summary provided.</div>';
+            try {
+                const response = await fetch("/api/analyze", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ text })
+                });
 
-            clausesBlock.innerHTML = renderList(data.key_clauses, "No key clauses found.");
-            partiesBlock.innerHTML = renderParties(data.parties);
+                const contentType = response.headers.get("content-type") || "";
+                let data = null;
 
-            setStatus("Analysis completed successfully.", "success");
-        } catch (error) {
-            setStatus(
-                "Failed to execute request. Please check that the server is running and the endpoint is accessible.",
-                "error"
-            );
-        } finally {
-            analyzeBtn.disabled = false;
-            analyzeBtn.textContent = "Analyze";
-        }
-    });
+                if (contentType.includes("application/json")) {
+                    data = await response.json();
+                } else {
+                    const textResponse = await response.text();
+                    data = { detail: textResponse };
+                }
 
-    updateCounter();
-</script>
+                if (!response.ok) {
+                    const message =
+                        data?.detail ||
+                        data?.message ||
+                        `Request error: ${response.status} ${response.statusText}`;
+                    setStatus(message, "error");
+                    return;
+                }
+
+                result.style.display = "grid";
+                try {
+                    const yamlStr = jsyaml.dump(data, { indent: 2 });
+                    rawOutput.textContent = yamlStr;
+                    rawOutput.className = 'language-yaml';
+                    delete rawOutput.dataset.highlighted;
+                    hljs.highlightElement(rawOutput);
+                } catch (e) {
+                    rawOutput.textContent = JSON.stringify(data, null, 2);
+                }
+
+                const isContract = Boolean(data.is_contract);
+                contractStatus.innerHTML = isContract
+                    ? 'Text recognized as a contract <span class="pill">YES</span>'
+                    : 'Text does not look like a contract <span class="pill">NO</span>';
+
+                aboutBlock.innerHTML = data.about
+                    ? `<div>${escapeHtml(data.about)}</div>`
+                    : '<div class="empty">No summary provided.</div>';
+
+                clausesBlock.innerHTML = renderList(data.key_clauses, "No key clauses found.");
+                partiesBlock.innerHTML = renderParties(data.parties);
+                risksBlock.innerHTML = renderRisks(data.parties);
+
+                setStatus("Analysis completed successfully.", "success");
+            } catch (error) {
+                setStatus(
+                    "Failed to execute request. Please check that the server is running and the endpoint is accessible.",
+                    "error"
+                );
+            } finally {
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = "Analyze";
+            }
+        });
+
+        updateCounter();
+    </script>
 </body>
+
 </html>
