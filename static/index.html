@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contract Risk Analyzer</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f7f7f8;
+            --card: #ffffff;
+            --text: #111827;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --primary: #111827;
+            --primary-hover: #1f2937;
+            --error-bg: #fef2f2;
+            --error-text: #b91c1c;
+            --success-bg: #f0fdf4;
+            --success-text: #166534;
+            --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .wrap {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 32px 20px 48px;
+        }
+
+        .header {
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        }
+
+        .label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .hint {
+            font-weight: 400;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 260px;
+            resize: vertical;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            font: inherit;
+            font-family: var(--mono);
+            font-size: 13px;
+            outline: none;
+            background: #fff;
+            color: var(--text);
+        }
+
+        textarea:focus {
+            border-color: #9ca3af;
+            box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.06);
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            appearance: none;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 16px;
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s ease, opacity 0.15s ease;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .ghost {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .ghost:hover {
+            background: #f9fafb;
+        }
+
+        .status {
+            margin-top: 16px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            display: none;
+            white-space: pre-wrap;
+        }
+
+        .status.error {
+            display: block;
+            background: var(--error-bg);
+            color: var(--error-text);
+            border: 1px solid #fecaca;
+        }
+
+        .status.success {
+            display: block;
+            background: var(--success-bg);
+            color: var(--success-text);
+            border: 1px solid #bbf7d0;
+        }
+
+        .result {
+            margin-top: 18px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .section {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            background: #fff;
+        }
+
+        .section h2 {
+            margin: 0 0 10px;
+            font-size: 16px;
+        }
+
+        .empty {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        pre {
+            margin: 0;
+            overflow: auto;
+            font-family: var(--mono);
+            font-size: 13px;
+            background: #fafafa;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+        }
+
+        .meta {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #f3f4f6;
+            color: #374151;
+            margin-left: 8px;
+        }
+
+        @media (max-width: 640px) {
+            .wrap {
+                padding: 20px 14px 32px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            textarea {
+                min-height: 220px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="header">
+        <h1>Contract Risk Analyzer</h1>
+        <p class="subtitle">Вставьте текст договора и получите структурированный анализ рисков.</p>
+    </div>
+
+    <div class="card">
+        <div class="label">
+            <span>Текст договора</span>
+            <span class="hint">Ограничение: до 50 000 символов</span>
+        </div>
+
+        <textarea id="contractText" placeholder="Вставьте сюда текст договора..."></textarea>
+
+        <div class="actions">
+            <button id="analyzeBtn" type="button">Анализировать</button>
+            <button id="clearBtn" class="ghost" type="button">Очистить</button>
+            <span id="counter" class="hint">0 символов</span>
+        </div>
+
+        <div id="status" class="status" aria-live="polite"></div>
+
+        <div class="result" id="result" style="display:none;">
+            <div class="section">
+                <h2>Статус</h2>
+                <div id="contractStatus" class="empty"></div>
+            </div>
+
+            <div class="section">
+                <h2>Ключевые пункты</h2>
+                <div id="clausesBlock" class="empty"></div>
+            </div>
+
+            <div class="section">
+                <h2>Риски</h2>
+                <div id="risksBlock" class="empty"></div>
+            </div>
+
+            <div class="section">
+                <h2>Полный ответ</h2>
+                <pre id="rawOutput">{}</pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const MAX_LENGTH = 50000;
+
+    const contractText = document.getElementById("contractText");
+    const analyzeBtn = document.getElementById("analyzeBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const counter = document.getElementById("counter");
+    const status = document.getElementById("status");
+    const result = document.getElementById("result");
+    const contractStatus = document.getElementById("contractStatus");
+    const clausesBlock = document.getElementById("clausesBlock");
+    const risksBlock = document.getElementById("risksBlock");
+    const rawOutput = document.getElementById("rawOutput");
+
+    function setStatus(message, type) {
+        status.textContent = message;
+        status.className = `status ${type}`;
+    }
+
+    function clearStatus() {
+        status.textContent = "";
+        status.className = "status";
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    function renderClauses(clauses) {
+        if (!Array.isArray(clauses) || clauses.length === 0) {
+            return '<div class="empty">Пункты не найдены.</div>';
+        }
+
+        return `<pre>${escapeHtml(JSON.stringify(clauses, null, 2))}</pre>`;
+    }
+
+    function renderRisks(risks) {
+        if (!Array.isArray(risks) || risks.length === 0) {
+            return '<div class="empty">Риски не найдены.</div>';
+        }
+
+        return `<pre>${escapeHtml(JSON.stringify(risks, null, 2))}</pre>`;
+    }
+
+    function updateCounter() {
+        const len = contractText.value.length;
+        counter.textContent = `${len.toLocaleString("ru-RU")} символов`;
+
+        if (len > MAX_LENGTH) {
+            counter.style.color = "#b91c1c";
+        } else {
+            counter.style.color = "";
+        }
+    }
+
+    contractText.addEventListener("input", updateCounter);
+
+    clearBtn.addEventListener("click", () => {
+        contractText.value = "";
+        updateCounter();
+        clearStatus();
+        result.style.display = "none";
+        rawOutput.textContent = "{}";
+    });
+
+    analyzeBtn.addEventListener("click", async () => {
+        const text = contractText.value.trim();
+
+        clearStatus();
+        result.style.display = "none";
+
+        if (!text) {
+            setStatus("Введите текст договора.", "error");
+            return;
+        }
+
+        if (text.length > MAX_LENGTH) {
+            setStatus(`Текст слишком длинный: ${text.length} символов. Максимум — ${MAX_LENGTH}.`, "error");
+            return;
+        }
+
+        analyzeBtn.disabled = true;
+        analyzeBtn.textContent = "Анализ...";
+        setStatus("Отправка запроса...", "success");
+
+        try {
+            const response = await fetch("/api/analyze", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ text })
+            });
+
+            const contentType = response.headers.get("content-type") || "";
+            let data = null;
+
+            if (contentType.includes("application/json")) {
+                data = await response.json();
+            } else {
+                const textResponse = await response.text();
+                data = { detail: textResponse };
+            }
+
+            if (!response.ok) {
+                const message =
+                    data?.detail ||
+                    data?.message ||
+                    `Ошибка запроса: ${response.status} ${response.statusText}`;
+                setStatus(message, "error");
+                return;
+            }
+
+            result.style.display = "grid";
+            rawOutput.textContent = JSON.stringify(data, null, 2);
+
+            const isContract = Boolean(data.is_contract);
+            contractStatus.innerHTML = isContract
+                ? 'Текст распознан как договор <span class="pill">OK</span>'
+                : 'Текст не похож на договор <span class="pill">CHECK</span>';
+
+            clausesBlock.innerHTML = renderClauses(data.clauses);
+            risksBlock.innerHTML = renderRisks(data.risks);
+
+            setStatus("Анализ завершён успешно.", "success");
+        } catch (error) {
+            setStatus(
+                "Не удалось выполнить запрос. Проверьте, что сервер запущен и endpoint доступен.",
+                "error"
+            );
+        } finally {
+            analyzeBtn.disabled = false;
+            analyzeBtn.textContent = "Анализировать";
+        }
+    });
+
+    updateCounter();
+</script>
+</body>
+</html>

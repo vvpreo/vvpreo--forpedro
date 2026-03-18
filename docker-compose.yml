@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: contract-risk-analyzer
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    # Volumes нужны для хот-релоада при разработке (опционально)
+    volumes:
+      - ./src:/app/src
+      - ./static:/app/static
+    restart: unless-stopped
