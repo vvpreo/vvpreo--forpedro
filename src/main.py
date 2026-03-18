@@ -20,6 +20,7 @@ app = FastAPI(
     title="Contract Risk Analyzer API",
     version="1.0.0",
     description="Minimal API for analyzing legal risks in contracts.",
+    
 )
 
 app.add_middleware(
@@ -30,8 +31,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-if STATIC_DIR.exists():
-    app.mount("/", StaticFiles(directory=STATIC_DIR), name="static")
 
 
 @app.get("/")
@@ -65,3 +64,7 @@ async def analyze(request: AnalyzeRequest):
         raise
     except Exception as exc:
         raise HTTPException(status_code=500, detail="Failed to analyze contract text") from exc
+
+if STATIC_DIR.exists():
+    app.mount("/", StaticFiles(directory=STATIC_DIR), name="static")
+

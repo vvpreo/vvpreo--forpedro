@@ -6,6 +6,7 @@ class AnalyzeRequest(BaseModel):
 
 
 class Party(BaseModel):
+    """Represents a party involved in the contract with their role and associated risks."""
     role: str = Field(..., description="Role of the party in the contract")
     potential_risks: list[str] = Field([], min_length=0,
                                        description="Potential risks associated with the party (at least one required)")
@@ -27,6 +28,7 @@ class Party(BaseModel):
 
 
 class AnalyzeResponse(BaseModel):
+    """Complete analysis result of a contract including classification, summary, key clauses, and parties."""
     is_contract: bool = Field(..., description="Whether the text is a contract")
     about: str = Field(..., min_length=1, description="Summary, what is this contract about? (cannot be empty)")
     key_clauses: list[str] = Field(..., min_length=1,

@@ -212,6 +212,27 @@
             margin-left: 8px;
         }
 
+        .list {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .party {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            background: #fafafa;
+        }
+
+        .party + .party {
+            margin-top: 10px;
+        }
+
+        .party-role {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
         @media (max-width: 640px) {
             .wrap {
                 padding: 20px 14px 32px;
@@ -231,7 +252,7 @@
 <div class="wrap">
     <div class="header">
         <h1>Contract Risk Analyzer</h1>
-        <p class="subtitle">Paste the contract text and get a structured risk analysis.</p>
+        <p class="subtitle">Paste the contract text and get a structured analysis.</p>
     </div>
 
     <div class="card">
@@ -252,8 +273,13 @@
 
         <div class="result" id="result" style="display:none;">
             <div class="section">
-                <h2>Status</h2>
+                <h2>Contract Classification</h2>
                 <div id="contractStatus" class="empty"></div>
+            </div>
+
+            <div class="section">
+                <h2>About</h2>
+                <div id="aboutBlock" class="empty"></div>
             </div>
 
             <div class="section">
@@ -262,8 +288,8 @@
             </div>
 
             <div class="section">
-                <h2>Risks</h2>
-                <div id="risksBlock" class="empty"></div>
+                <h2>Parties</h2>
+                <div id="partiesBlock" class="empty"></div>
             </div>
 
             <div class="section">
@@ -284,8 +310,9 @@
     const status = document.getElementById("status");
     const result = document.getElementById("result");
     const contractStatus = document.getElementById("contractStatus");
+    const aboutBlock = document.getElementById("aboutBlock");
     const clausesBlock = document.getElementById("clausesBlock");
-    const risksBlock = document.getElementById("risksBlock");
+    const partiesBlock = document.getElementById("partiesBlock");
     const rawOutput = document.getElementById("rawOutput");
 
     function setStatus(message, type) {
@@ -307,20 +334,29 @@
             .replaceAll("'", "&#039;");
     }
 
-    function renderClauses(clauses) {
-        if (!Array.isArray(clauses) || clauses.length === 0) {
-            return '<div class="empty">No clauses found.</div>';
+    function renderList(items, emptyMessage) {
+        if (!Array.isArray(items) || items.length === 0) {
+            return `<div class="empty">${escapeHtml(emptyMessage)}</div>`;
         }
 
-        return `<pre>${escapeHtml(JSON.stringify(clauses, null, 2))}</pre>`;
+        return `
+            <ul class="list">
+                ${items.map(item => `<li>${escapeHtml(item)}</li>`).join("")}
+            </ul>
+        `;
     }
 
-    function renderRisks(risks) {
-        if (!Array.isArray(risks) || risks.length === 0) {
-            return '<div class="empty">No risks found.</div>';
+    function renderParties(parties) {
+        if (!Array.isArray(parties) || parties.length === 0) {
+            return '<div class="empty">No parties found.</div>';
         }
 
-        return `<pre>${escapeHtml(JSON.stringify(risks, null, 2))}</pre>`;
+        return parties.map(party => `
+            <div class="party">
+                <div class="party-role">${escapeHtml(party.role || "Unnamed party")}</div>
+                ${renderList(party.potential_risks, "No risks listed.")}
+            </div>
+        `).join("");
     }
 
     function updateCounter() {
@@ -370,7 +406,7 @@
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({text})
+                body: JSON.stringify({ text })
             });
 
             const contentType = response.headers.get("content-type") || "";
@@ -380,7 +416,7 @@
                 data = await response.json();
             } else {
                 const textResponse = await response.text();
-                data = {detail: textResponse};
+                data = { detail: textResponse };
             }
 
             if (!response.ok) {
@@ -397,11 +433,15 @@
 
             const isContract = Boolean(data.is_contract);
             contractStatus.innerHTML = isContract
-                ? 'Text recognized as a contract <span class="pill">OK</span>'
-                : 'Text does not look like a contract <span class="pill">CHECK</span>';
+                ? 'Text recognized as a contract <span class="pill">YES</span>'
+                : 'Text does not look like a contract <span class="pill">NO</span>';
 
-            clausesBlock.innerHTML = renderClauses(data.clauses);
-            risksBlock.innerHTML = renderRisks(data.risks);
+            aboutBlock.innerHTML = data.about
+                ? `<div>${escapeHtml(data.about)}</div>`
+                : '<div class="empty">No summary provided.</div>';
+
+            clausesBlock.innerHTML = renderList(data.key_clauses, "No key clauses found.");
+            partiesBlock.innerHTML = renderParties(data.parties);
 
             setStatus("Analysis completed successfully.", "success");
         } catch (error) {
